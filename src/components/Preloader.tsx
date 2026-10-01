@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   LOGO_PIECE_TOP,
   LOGO_PIECE_BOTTOM,
@@ -37,16 +37,14 @@ function markIntroSeen() {
 
 export default function Preloader() {
   const [show, setShow] = useState(true);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (introRecentlySeen()) {
-      setShow(false);
-      return;
+    if (introRecentlySeen() || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const frame = requestAnimationFrame(() => setShow(false));
+      return () => cancelAnimationFrame(frame);
     }
-    // The intro always plays its full length — it's a brief, brand-defining
-    // reveal, so we intentionally don't shorten it under reduced-motion (which
-    // iOS Low Power Mode forces on). A hard fallback timer guarantees the
-    // overlay always dismisses even if an animation event never fires.
+    // Keep the original brand sequence, with a hard fallback for interrupted animation.
     const t = setTimeout(() => {
       setShow(false);
       markIntroSeen();
@@ -67,8 +65,8 @@ export default function Preloader() {
         <motion.div
           key="preloader"
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-base"
-          exit={{ y: "-100%" }}
-          transition={{ duration: 0.9, ease: EASE }}
+          exit={reducedMotion ? { opacity: 0 } : { y: "-100%" }}
+          transition={{ duration: reducedMotion ? 0 : 0.6, ease: EASE }}
           aria-hidden="true"
         >
           {/* Logo: two pieces of the cube draw themselves, fly in and lock together */}

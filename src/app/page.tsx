@@ -1,185 +1,113 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { projects } from "@/data/projects";
 import { useLang } from "@/lib/i18n";
-import { LineReveal, Reveal } from "@/components/Reveal";
-import ParallaxImage from "@/components/ParallaxImage";
-import MarqueeBand from "@/components/MarqueeBand";
-import ProjectCard from "@/components/ProjectCard";
-import Logo3D from "@/components/Logo3D";
-import ProcessSticky from "@/components/ProcessSticky";
+import ProjectChapters from "@/components/ProjectChapters";
+import ScrollPhotograph from "@/components/ScrollPhotograph";
+import { BoardArrow, SampleNote } from "@/components/BoardElements";
+import { MotionHeading, MotionSurface } from "@/components/MotionSurface";
 
 export default function Home() {
-  const { t } = useLang();
-  const featured = projects.slice(0, 4);
+  const { t, lang } = useLang();
+  const project = projects[0];
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-
   return (
     <>
-      {/* ── Hero ─────────────────────────────────────── */}
-      <section className="relative">
-        <div className="relative mx-auto max-w-[1700px] px-6 pt-36 md:px-12 md:pt-44">
-          <div className="grid items-end gap-10 lg:grid-cols-12">
-            <div className="lg:col-span-9">
-              <Reveal y={0} delay={0.1}>
-                <p className="mb-6 flex items-center gap-4 text-xs uppercase tracking-[0.4em] text-bone/50">
-                  <span className="h-px w-12 bg-accent" />
-                  {t.hero.eyebrow}
-                </p>
-              </Reveal>
-              <LineReveal
-                as="h1"
-                delay={0.2}
-                className="font-display text-[clamp(3.8rem,12vw,12rem)] font-black uppercase leading-[0.88] tracking-[-0.03em]"
-                lines={[
-                  <span key="0">{t.hero.l1}</span>,
-                  <span key="1">
-                    {t.hero.l2} <span className="text-accent">&</span>
-                  </span>,
-                  <span key="2" className="text-outline">
-                    {t.hero.l3}
-                  </span>,
-                ]}
-              />
-            </div>
-            <div className="lg:col-span-3">
-              <Reveal delay={0.6}>
-                <p className="max-w-[34ch] text-base leading-relaxed text-bone/60">
-                  {t.hero.intro}
-                </p>
-                <Link
-                  href="/projects"
-                  className="group mt-8 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-accent"
-                >
-                  {t.hero.viewWork}
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" aria-hidden="true">
-                    <path d="M5 12h14M13 6l6 6-6 6" />
-                  </svg>
-                </Link>
-              </Reveal>
-            </div>
-          </div>
-
-          {/* Hero image */}
-          <Reveal delay={0.5} className="mt-16 md:mt-24">
-            <Link href={`/projects/${featured[0].slug}`} className="group block">
-              <ParallaxImage
-                src={featured[0].hero}
-                alt={featured[0].title}
-                priority
-                className="h-[55vh] md:h-[78vh]"
-              />
-              <div className="mt-4 flex items-center justify-between text-xs uppercase tracking-[0.3em] text-bone/45">
-                <span className="transition-colors duration-300 group-hover:text-accent">
-                  {featured[0].title} — {featured[0].year}
-                </span>
-                <span>{t.hero.scroll}</span>
-              </div>
-            </Link>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── Marquee ──────────────────────────────────── */}
-      <div className="mt-24 md:mt-36">
-        <MarqueeBand />
-      </div>
-
-      {/* ── Selected works ───────────────────────────── */}
-      <section className="mx-auto max-w-[1700px] px-6 py-28 md:px-12 md:py-40">
-        <div className="mb-16 flex flex-wrap items-end justify-between gap-6 md:mb-24">
-          <LineReveal
-            as="h2"
-            className="font-display text-[clamp(2.6rem,7vw,7rem)] font-black uppercase leading-[0.92] tracking-[-0.02em]"
-            lines={[
-              <span key="0">{t.works.l1}</span>,
-              <span key="1">
-                {t.works.l2}<span className="text-accent">.</span>
-              </span>,
-            ]}
+      <section className="board-hero">
+        <MotionSurface className="hero-photograph" variant="image" delay={0.12}>
+          <ScrollPhotograph src={project.hero} alt={project.title} eager />
+          <Link className="photo-ticket" href={`/projects/${project.slug}`}>
+            <span>{project.title}</span>
+            <span>
+              {project.location} / {project.year}
+            </span>
+            <BoardArrow />
+          </Link>
+        </MotionSurface>
+        <div className="orange-field hero-signature">
+          <MotionHeading
+            as="h1"
+            text={`${t.hero.l1} ${t.hero.l2} & ${t.hero.l3}`}
+            delay={0.2}
           />
-          <Reveal delay={0.2}>
-            <Link
-              href="/projects"
-              className="group inline-flex items-center gap-3 rounded-full border border-bone/25 px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.25em] text-bone transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-base"
-            >
-              {t.works.allProjects}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
-            </Link>
-          </Reveal>
+          <Link className="hero-action" href="#selected-work">
+            <span>{t.hero.viewWork}</span>
+            <BoardArrow />
+          </Link>
         </div>
-
-        <div className="grid gap-x-10 gap-y-20 md:grid-cols-2">
-          <ProjectCard project={featured[0]} index={0} />
-          <div className="md:mt-32">
-            <ProjectCard project={featured[1]} index={1} delay={0.1} />
-          </div>
-          <ProjectCard project={featured[2]} index={2} />
-          <div className="md:mt-32">
-            <ProjectCard project={featured[3]} index={3} delay={0.1} />
-          </div>
-        </div>
+        <MotionSurface className="hero-caption" delay={0.25}>
+          <p>
+            {lang === "sq"
+              ? "Studio e pavarur arkitekture, Prishtinë."
+              : "Independent architecture practice, Prishtina."}
+          </p>
+          <SampleNote compact />
+        </MotionSurface>
       </section>
-
-      {/* ── The architect ────────────────────────────── */}
-      <section className="border-t border-line">
-        <div className="mx-auto grid max-w-[1700px] gap-16 px-6 py-28 md:px-12 md:py-40 lg:grid-cols-2">
-          <div>
-            <LineReveal
-              as="h2"
-              className="font-display text-[clamp(2.6rem,6vw,6rem)] font-black uppercase leading-[0.92] tracking-[-0.02em]"
-              lines={t.about.headingLines.map((line, i) => (
-                <span key={i} className={i === t.about.headingLines.length - 1 ? "text-outline-accent" : undefined}>
-                  {line}
-                </span>
-              ))}
-            />
-            <Reveal delay={0.2} className="mt-10 space-y-6 text-lg leading-relaxed text-bone/65">
-              <p>{t.about.p1}</p>
-              <p>{t.about.p2}</p>
-            </Reveal>
-            <div className="mt-14 grid grid-cols-2 gap-px bg-line md:grid-cols-4">
-              {t.about.stats.map((s, i) => (
-                <Reveal key={i} delay={0.1 + i * 0.08} className="bg-base py-6 pr-4 md:px-5">
-                  <p className="font-display text-4xl font-black text-accent md:text-5xl">
-                    {s.value}
-                  </p>
-                  <p className="mt-2 text-[11px] uppercase tracking-[0.25em] text-bone/45">
-                    {s.label}
-                  </p>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-          <Reveal delay={0.15} className="relative">
-            <ParallaxImage
+      <ProjectChapters />
+      <section className="practice-board" id="studio">
+        <div className="practice-copy">
+          <MotionHeading
+            text={
+              lang === "sq"
+                ? "Një arkitekt. Vëmendje e plotë."
+                : "One architect. Full attention."
+            }
+          />
+          <MotionSurface as="p" delay={0.08}>
+            {t.about.p1}
+          </MotionSurface>
+          <MotionSurface as="p" delay={0.16}>
+            {t.about.p2}
+          </MotionSurface>
+          <Link className="text-action" href="/contact">
+            {t.services.cta}
+            <BoardArrow />
+          </Link>
+        </div>
+        <MotionSurface as="figure" className="portrait-board" variant="image">
+          <div className="portrait-image">
+            <Image
               src={`${basePath}/images/curri-pic.png`}
               alt={t.about.portraitAlt}
-              className="h-[60vh] w-full lg:h-full lg:min-h-[640px]"
-              sizes="(min-width: 1024px) 50vw, 100vw"
+              fill
+              sizes="(min-width: 900px) 42vw, 100vw"
             />
-            <div className="absolute -bottom-5 -left-5 hidden h-28 w-28 border-2 border-accent md:block" aria-hidden="true" />
-          </Reveal>
+          </div>
+          <figcaption>
+            Curri Architect<span>{t.footer.city}</span>
+          </figcaption>
+        </MotionSurface>
+      </section>
+      <section className="services-board">
+        <div className="services-intro">
+          <MotionHeading
+            text={
+              lang === "sq" ? "Nga skica në kantier." : "From sketch to site."
+            }
+          />
+          <MotionSurface as="p" delay={0.1}>
+            {lang === "sq"
+              ? "Arkitekturë, enterier dhe vëmendje ndaj çdo detaji."
+              : "Architecture, interiors and attention to every detail."}
+          </MotionSurface>
+        </div>
+        <div className="service-list">
+          {t.services.items.map((service, index) => (
+            <MotionSurface key={service.name} delay={index * 0.08}>
+              <details open={index === 0}>
+                <summary>
+                  {service.name}
+                  <span className="details-symbol" aria-hidden="true" />
+                </summary>
+                <p>{service.desc}</p>
+              </details>
+            </MotionSurface>
+          ))}
         </div>
       </section>
-
-      {/* ── Brand moment: the mark draws itself on scroll ── */}
-      <section className="relative border-t border-line">
-        <div className="relative mx-auto flex max-w-[1700px] flex-col items-center px-6 py-28 md:py-44">
-          <Logo3D className="h-48 md:h-72" />
-          <Reveal delay={0.4} className="mt-12 text-center">
-            <p className="text-xs uppercase tracking-[0.45em] text-bone/45">
-              {t.band.tagline}
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── Process (sticky scroll) ──────────────────── */}
-      <ProcessSticky />
     </>
   );
 }

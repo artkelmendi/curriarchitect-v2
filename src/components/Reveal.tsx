@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -8,7 +8,6 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export function Reveal({
   children,
   delay = 0,
-  y = 48,
   className,
 }: {
   children: ReactNode;
@@ -19,13 +18,13 @@ export function Reveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y }}
+      initial={false}
       whileInView={{ opacity: 1, y: 0 }}
       // `amount` instead of a negative margin: rootMargin-based triggers are
       // unreliable on some mobile browsers / in-app webviews and can leave
       // content permanently hidden.
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.9, delay, ease: EASE }}
+      transition={{ duration: 0.3, delay, ease: EASE }}
     >
       {children}
     </motion.div>
@@ -54,6 +53,7 @@ export function LineReveal({
   className,
   lineClassName,
   as: Tag = "h2",
+  animateOnArrival = false,
 }: {
   lines: ReactNode[];
   delay?: number;
@@ -61,12 +61,14 @@ export function LineReveal({
   className?: string;
   lineClassName?: string;
   as?: "h1" | "h2" | "h3" | "p" | "div";
+  animateOnArrival?: boolean;
 }) {
+  const reducedMotion = useReducedMotion();
   const MotionTag = motion[Tag];
   return (
     <MotionTag
       className={className}
-      initial="hidden"
+      initial={animateOnArrival && !reducedMotion ? "hidden" : false}
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
       transition={{ staggerChildren: stagger, delayChildren: delay }}

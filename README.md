@@ -1,59 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Curri Architect v2
 
-## Getting Started
+An editorial architecture portfolio with the original Curri vector logo, signature orange, neutral light/charcoal themes, English/Albanian content, project galleries and an email enquiry flow.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Deploy to GitHub Pages
-
-This repo includes GitHub Actions workflow to build the app and publish the generated static output to the `gh-pages` branch.
-
-1. Create a GitHub repository named `curri-architect`.
-2. Add the remote and push the current branch:
+## Local preview
 
 ```bash
-git init
-git add .
-git commit -m "chore: initial commit"
-git branch -M main
-git remote add origin git@github.com:<your-username>/curri-architect.git
-git push -u origin main
+npm ci
+npm run dev -- --hostname 127.0.0.1 --port 3001
 ```
 
-3. On GitHub, enable Pages for the repository and set the source to the `gh-pages` branch.
-4. After the workflow runs, your site will be available at:
+Open [http://127.0.0.1:3001](http://127.0.0.1:3001).
 
-`https://<your-username>.github.io/curri-architect/`
+Project text and images are editable in `src/data/projects.ts`. The existing project content and photography are illustrative, not independently verified studio projects. Replace them with the studio's real materials before representing them as built work.
 
-If you prefer HTTPS remote access, replace the remote URL with `https://github.com/<your-username>/curri-architect.git`.
+The exact original logo geometry and drawn wordmark live in `src/components/LogoMark.tsx`. Draw-on effects use these paths, not a substitute font. The startup identity renders before hydration to prevent a flash of the page. Reduced-motion and no-JavaScript visitors receive static, readable alternatives.
+
+## Publishing
+
+Live site: [artkelmendi.github.io/curriarchitect-v2](https://artkelmendi.github.io/curriarchitect-v2/)
+
+Pushes to `main` run `.github/workflows/github-pages.yml`. It builds the static export with `/curriarchitect-v2` as its base path and publishes the artifact through GitHub Pages. Pages must use **GitHub Actions** as its publishing source.
+
+This repository is separate from `artkelmendi/curri-architect`; publishing v2 does not overwrite the original repository or site.
+
+## Design and behavior
+
+- Original orange `#ff6600` and exact icon/wordmark letterforms.
+- Panoramic project boards, compact neutral footer and contact layout.
+- Startup logo drawing, pathname transitions, masked titles, scroll entrances and restrained image movement.
+- Keyboard-safe navigation and reduced-motion alternatives.
+- Contact prepares an email in the visitor's own email app; it does not silently submit to a server.
+
+See `DESIGN.md` for the design system and `LOCAL-PREVIEW.md` for implementation notes.

@@ -1,3 +1,7 @@
+"use client";
+
+import { logoDrawProps, useLogoDraw } from "@/lib/use-logo-draw";
+
 /**
  * All geometry below is lifted verbatim from the client's original logo SVG
  * ("Curri Logo s-02.svg") — the mark pieces and every wordmark letterform are
@@ -40,30 +44,44 @@ export const WORDMARK_VIEWBOX = "110 340 380 94";
 export const LOCKUP_VIEWBOX = "110 163 380 271";
 
 export default function LogoMark({ className }: { className?: string }) {
+  const ref = useLogoDraw();
   return (
     <svg
       viewBox={LOGO_VIEWBOX}
+      ref={ref}
       className={className}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d={LOGO_PIECE_TOP} fill="currentColor" />
-      <path d={LOGO_PIECE_BOTTOM} fill="currentColor" />
+      <path
+        {...logoDrawProps}
+        data-logo-piece="mark"
+        d={LOGO_PIECE_TOP}
+        fill="currentColor"
+      />
+      <path
+        {...logoDrawProps}
+        data-logo-piece="mark"
+        d={LOGO_PIECE_BOTTOM}
+        fill="currentColor"
+      />
     </svg>
   );
 }
 
 export function LogoWordmark({ className }: { className?: string }) {
+  const ref = useLogoDraw();
   return (
     <svg
       viewBox={WORDMARK_VIEWBOX}
+      ref={ref}
       className={className}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
     >
       {[...CURRI_LETTERS, ...ARCHITECT_LETTERS].map((d, i) => (
-        <path key={i} d={d} />
+        <path {...logoDrawProps} data-logo-piece="letter" key={i} d={d} />
       ))}
     </svg>
   );
@@ -71,20 +89,32 @@ export function LogoWordmark({ className }: { className?: string }) {
 
 /** The complete original logo: orange mark above the wordmark in currentColor. */
 export function LogoFull({ className }: { className?: string }) {
+  const ref = useLogoDraw();
   return (
     <svg
       viewBox={LOCKUP_VIEWBOX}
+      ref={ref}
       className={className}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
     >
       <g fill="#ff6600">
-        <path d={LOGO_PIECE_TOP} />
-        <path d={LOGO_PIECE_BOTTOM} />
+        <path
+          {...logoDrawProps}
+          data-logo-piece="mark"
+          stroke="#ff6600"
+          d={LOGO_PIECE_TOP}
+        />
+        <path
+          {...logoDrawProps}
+          data-logo-piece="mark"
+          stroke="#ff6600"
+          d={LOGO_PIECE_BOTTOM}
+        />
       </g>
       <g fill="currentColor">
         {[...CURRI_LETTERS, ...ARCHITECT_LETTERS].map((d, i) => (
-          <path key={i} d={d} />
+          <path {...logoDrawProps} data-logo-piece="letter" key={i} d={d} />
         ))}
       </g>
     </svg>

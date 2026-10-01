@@ -1,15 +1,26 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { useMotionHydrated } from "@/components/MotionSurface";
 
 export default function Template({ children }: { children: React.ReactNode }) {
+  const reducedMotion = useReducedMotion();
+  const pathname = usePathname();
+  const hydrated = useMotionHydrated();
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <div>
+      {hydrated && !reducedMotion && (
+        <motion.div
+          key={pathname}
+          className="route-shutter"
+          aria-hidden="true"
+          initial={{ clipPath: "inset(0 0 0% 0)" }}
+          animate={{ clipPath: "inset(100% 0 0 0)" }}
+          transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1] }}
+        />
+      )}
       {children}
-    </motion.div>
+    </div>
   );
 }

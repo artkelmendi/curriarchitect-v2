@@ -17,26 +17,23 @@ type ThemeContextValue = {
 };
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: "dark",
+  theme: "light",
   setTheme: () => {},
   toggle: () => {},
 });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Default matches the server render (dark). The inline script in <head> sets
+  // Default matches the server render (light). The inline script in <head> sets
   // the actual attribute before paint to avoid a flash; we sync state here.
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
 
   useEffect(() => {
     const current = document.documentElement.getAttribute("data-theme");
     if (current === "light" || current === "dark") {
-      setThemeState(current);
+      const frame = requestAnimationFrame(() => setThemeState(current));
+      return () => cancelAnimationFrame(frame);
     }
   }, []);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
 
   const setTheme = (t: Theme) => {
     setThemeState(t);
@@ -45,7 +42,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       document.documentElement.setAttribute("data-theme", t);
     }
     try {
-      localStorage.setItem("curri-theme", t);
+      localStorage.setItem("curri-board-theme", t);
     } catch {}
   };
 
@@ -63,4 +60,4 @@ export function useTheme() {
 }
 
 /** Runs before paint to set the theme from storage and avoid a flash. */
-export const themeInitScript = `(function(){try{var t=localStorage.getItem('curri-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();`;
+export const themeInitScript = `(function(){try{var t=localStorage.getItem('curri-board-theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`;

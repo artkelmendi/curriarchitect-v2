@@ -329,8 +329,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("curri-lang");
-    if (saved === "en" || saved === "sq") setLangState(saved);
+    let frame: number | undefined;
+    try {
+      const saved = localStorage.getItem("curri-lang");
+      if (saved === "en" || saved === "sq") frame = requestAnimationFrame(() => setLangState(saved));
+    } catch {}
+    return () => { if (frame !== undefined) cancelAnimationFrame(frame); };
   }, []);
 
   useEffect(() => {
@@ -344,7 +348,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const setLang = (next: Lang) => {
     if (next === lang) return;
-    localStorage.setItem("curri-lang", next);
+    try { localStorage.setItem("curri-lang", next); } catch {}
 
     const reduced =
       typeof window !== "undefined" &&

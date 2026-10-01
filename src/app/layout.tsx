@@ -1,29 +1,25 @@
 import type { Metadata } from "next";
-import { Archivo, Space_Grotesk } from "next/font/google";
+import { Barlow_Condensed, Manrope } from "next/font/google";
 import "./globals.css";
-import Preloader from "@/components/Preloader";
 import SmoothScroll from "@/components/SmoothScroll";
-import CustomCursor from "@/components/CustomCursor";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ScrollFrame from "@/components/ScrollFrame";
-import LogoGrid from "@/components/LogoGrid";
+import StartupIdentity from "@/components/StartupIdentity";
 import { LanguageProvider } from "@/lib/i18n";
 import { ThemeProvider, themeInitScript } from "@/lib/theme";
 
-const archivo = Archivo({
-  variable: "--font-archivo",
+const display = Barlow_Condensed({
+  variable: "--font-board",
+  weight: ["500", "600", "700"],
   subsets: ["latin"],
   display: "swap",
 });
 
-const grotesk = Space_Grotesk({
-  variable: "--font-grotesk",
+const body = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
   display: "swap",
 });
-
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const metadata: Metadata = {
   title: {
@@ -40,25 +36,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${archivo.variable} ${grotesk.variable} h-full antialiased`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <noscript>
+          <style>{`.startup-identity { display: none !important; }`}</style>
+        </noscript>
       </head>
-      <body
-        className="flex min-h-full flex-col"
-        style={{ ["--logo-grid-bg" as string]: `url("${basePath}/images/curr-background.svg")` }}
-      >
+      <body className="flex min-h-full flex-col">
         <ThemeProvider>
-        <LanguageProvider>
-          <LogoGrid />
-          <ScrollFrame />
-          <Preloader />
-          <SmoothScroll />
-          <CustomCursor />
-          <Navbar />
-          <main className="relative z-10 flex-1">{children}</main>
-          <Footer />
-        </LanguageProvider>
+          <LanguageProvider>
+            <SmoothScroll />
+            <StartupIdentity />
+            <a className="skip-link" href="#main-content">
+              Skip to content
+            </a>
+            <Navbar />
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

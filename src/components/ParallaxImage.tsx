@@ -31,18 +31,19 @@ export default function ParallaxImage({
   const y = useTransform(
     scrollYProgress,
     [0, 1],
-    reduced ? ["0%", "0%"] : ["-9%", "9%"]
+    reduced ? ["0%", "0%"] : ["-4%", "4%"]
   );
 
   return (
     <div ref={ref} className={`relative overflow-hidden ${className ?? ""}`}>
-      <motion.div style={{ y }} className="absolute -inset-y-[12%] inset-x-0">
+      <motion.div style={{ y }} className="parallax-media absolute -inset-y-[6%] inset-x-0">
         <Image
           src={src}
           alt={alt}
           fill
           sizes={sizes}
-          priority={priority}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
           className="object-cover"
         />
       </motion.div>

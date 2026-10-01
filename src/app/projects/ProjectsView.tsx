@@ -1,51 +1,94 @@
 "use client";
-
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 import { projects } from "@/data/projects";
 import { useLang } from "@/lib/i18n";
-import { LineReveal, Reveal } from "@/components/Reveal";
-import ProjectCard from "@/components/ProjectCard";
-
+import { BoardArrow, SampleNote } from "@/components/BoardElements";
+import { MotionHeading, MotionSurface } from "@/components/MotionSurface";
 export default function ProjectsView() {
-  const { t } = useLang();
-
+  const { t, lang } = useLang();
+  const [category, setCategory] = useState("all");
+  const categories = [
+    ...new Map(
+      projects.map((project) => [project.category.en, project.category[lang]]),
+    ).entries(),
+  ];
+  const visible =
+    category === "all"
+      ? projects
+      : projects.filter((project) => project.category.en === category);
   return (
-    <section className="mx-auto max-w-[1700px] px-6 pb-32 pt-36 md:px-12 md:pt-44">
-      {/* Header */}
-      <div className="mb-20 md:mb-28">
-        <Reveal y={0} delay={0.1}>
-          <p className="mb-6 flex items-center gap-4 text-xs uppercase tracking-[0.4em] text-bone/50">
-            <span className="h-px w-12 bg-accent" />
-            {t.projectsPage.eyebrow}
-          </p>
-        </Reveal>
-        <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
-          <LineReveal
-            as="h1"
-            delay={0.15}
-            className="font-display text-[clamp(3.5rem,11vw,11rem)] font-black uppercase leading-[0.88] tracking-[-0.03em]"
-            lines={[<span key="0">{t.projectsPage.title}</span>]}
-          />
-          <Reveal delay={0.4}>
-            <span className="mb-3 inline-block font-display text-2xl font-bold text-accent md:text-4xl">
-              ({String(projects.length).padStart(2, "0")})
-            </span>
-          </Reveal>
-        </div>
-        <Reveal delay={0.45} className="mt-8 max-w-[52ch]">
-          <p className="text-base leading-relaxed text-bone/55">
-            {t.projectsPage.blurb}
-          </p>
-        </Reveal>
-      </div>
-
-      {/* Grid */}
-      <div className="grid gap-x-10 gap-y-20 md:grid-cols-2">
-        {projects.map((project, i) => (
-          <div key={project.slug} className={i % 2 === 1 ? "md:mt-32" : ""}>
-            <ProjectCard project={project} index={i} delay={(i % 2) * 0.1} />
+    <>
+      <section className="archive-title orange-field">
+        <MotionHeading as="h1" text={t.projectsPage.title} />
+        <MotionSurface as="p" delay={0.12}>
+          {lang === "sq"
+            ? "Hapësira për të jetuar, punuar dhe për t'u takuar."
+            : "Spaces to live, work and come together."}
+        </MotionSurface>
+      </section>
+      <section className="project-archive">
+        <MotionSurface className="archive-controls" delay={0.18}>
+          <div
+            role="group"
+            aria-label={
+              lang === "sq" ? "Lloji i projektit" : "Project category"
+            }
+          >
+            {[
+              ["all", lang === "sq" ? "Të gjitha" : "All projects"],
+              ...categories,
+            ].map(([value, label]) => (
+              <button
+                type="button"
+                key={value}
+                aria-pressed={category === value}
+                onClick={() => setCategory(value)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
+          <span aria-live="polite">
+            {visible.length} {lang === "sq" ? "projekte" : "projects"}
+          </span>
+        </MotionSurface>
+        {visible.map((project, i) => (
+          <Link
+            className="archive-project"
+            key={`${category}-${project.slug}`}
+            href={`/projects/${project.slug}`}
+          >
+            <MotionSurface className="archive-photo" variant="image">
+              <Image
+                src={project.hero}
+                alt={project.title}
+                fill
+                sizes="(min-width: 900px) 65vw, 100vw"
+                loading={i === 0 ? "eager" : "lazy"}
+              />
+            </MotionSurface>
+            <MotionSurface
+              className="archive-project-copy"
+              variant="panel"
+              delay={0.08}
+            >
+              <div className="chapter-location">
+                <span>{project.location}</span>
+                <span>{project.year}</span>
+              </div>
+              <MotionHeading text={project.title} delay={0.14} />
+              <p>{project.excerpt[lang]}</p>
+              <div className="archive-project-bottom">
+                <span>{project.category[lang]}</span>
+                <BoardArrow />
+              </div>
+            </MotionSurface>
+          </Link>
         ))}
-      </div>
-    </section>
+        <SampleNote />
+      </section>
+    </>
   );
 }

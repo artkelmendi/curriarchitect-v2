@@ -12,12 +12,11 @@ export default function ThemeToggle({ className }: { className?: string }) {
   const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const next = isDark ? "light" : "dark";
 
-    // The theme wipe is a deliberate, tap-triggered flourish, so we let it play
-    // even under reduced-motion (which iOS Low Power Mode forces on). We only
-    // fall back to an instant switch where the API genuinely isn't available.
+    // Keep the tap-triggered reveal, with a direct switch for reduced motion.
     const supported =
       typeof document !== "undefined" &&
-      "startViewTransition" in document;
+      "startViewTransition" in document &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (!supported) {
       setTheme(next);
@@ -25,11 +24,12 @@ export default function ThemeToggle({ className }: { className?: string }) {
     }
 
     // Circular reveal of the new theme, expanding from the toggle button.
-    const x = e.clientX;
-    const y = e.clientY;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.detail === 0 ? rect.left + rect.width / 2 : e.clientX;
+    const y = e.detail === 0 ? rect.top + rect.height / 2 : e.clientY;
     const endRadius = Math.hypot(
       Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
+      Math.max(y, window.innerHeight - y),
     );
 
     const transition = (
@@ -53,7 +53,7 @@ export default function ThemeToggle({ className }: { className?: string }) {
             duration: 600,
             easing: EASE,
             pseudoElement: "::view-transition-new(root)",
-          }
+          },
         );
       })
       // If the transition aborts (e.g. tab not visible), the theme still
@@ -67,17 +67,30 @@ export default function ThemeToggle({ className }: { className?: string }) {
       onClick={onClick}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       title={isDark ? "Light mode" : "Dark mode"}
-      className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-bone/20 text-bone/70 transition-colors duration-200 hover:border-accent hover:text-accent ${className ?? ""}`}
+      className={`flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-bone/20 text-bone/70 transition-colors duration-200 hover:border-accent hover:text-accent ${className ?? ""}`}
     >
       {isDark ? (
         // Sun — click to go light
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-[18px] w-[18px]" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          className="h-[18px] w-[18px]"
+          aria-hidden="true"
+        >
           <circle cx="12" cy="12" r="4" />
           <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
         </svg>
       ) : (
         // Moon — click to go dark
-        <svg viewBox="0 0 24 24" fill="currentColor" className="h-[18px] w-[18px]" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="h-[18px] w-[18px]"
+          aria-hidden="true"
+        >
           <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
         </svg>
       )}
